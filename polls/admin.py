@@ -1,7 +1,19 @@
 from django.contrib import admin
 
-from polls.models import Question
+from polls.models import Choice, Question
 
-# Register your models here.
+class ChoiceInline(admin.TabularInline):
+    model = Choice
+    # Says to show 3 extra choice fields by default
+    extra = 3
 
-admin.site.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {"fields": ["question_text"]}),
+        ("Date information", {"fields": ["pub_date"], "classes": ["collapse"]}),
+    ]
+    list_display = ["question_text", "pub_date", "was_published_recently"]
+    inlines = [ChoiceInline]
+    list_filter = ["pub_date"]
+
+admin.site.register(Question, QuestionAdmin)
